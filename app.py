@@ -48,8 +48,17 @@ def create_store():
     return jsonify(new_store)
 
 
+# GET /store/<string:name>/item
+@app.route('/store/<string:name>/item')
+def get_items_in_store(name):
+    for store in stores:
+        if store['name'] == name:
+            return jsonify({'items': store['items']})
+    return jsonify({'error': 'store not found'})
+
+
 # POST /store/<string:name>/item {name:, price:}
-@app.route('/store<string:name>/item', methods=['POST'])
+@app.route('/store/<string:name>/item', methods=['POST'])
 def create_item_in_store(name):
     request_data = request.get_json()
     for store in stores:
@@ -60,15 +69,6 @@ def create_item_in_store(name):
                 }
             store['items'].append(new_item)
             return jsonify(new_item)
-    return jsonify({'error': 'store not found'})
-
-
-# GET /store/<string:name>/item
-@app.route('/store/<string:name>/item')
-def get_items_in_store(name):
-    for store in stores:
-        if store['name'] == name:
-            return jsonify({'items': store['items']})
     return jsonify({'error': 'store not found'})
 
 
