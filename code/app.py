@@ -8,9 +8,11 @@ from security import authenticate, identity
 
 
 app = Flask(__name__)
-app.secret_key = 'hugo'
-api = Api(app)
+app.debug = True
+app.config['SECRET_KEY'] = 'super-secret'
+
 jwt = JWT(app, authenticate, identity)
+api = Api(app)
 
 items = []
 
@@ -42,4 +44,4 @@ class ItemList(Resource):
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 
-app.run(port=5000, debug=True)
+app.run(port=5000)
