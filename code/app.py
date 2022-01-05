@@ -1,3 +1,5 @@
+from user import UserRegister
+
 from flask import Flask
 
 from flask_jwt import JWT
@@ -67,5 +69,6 @@ class ItemList(Resource):
 
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
+api.add_resource(UserRegister, '/register')
 
 app.run(port=5000)
