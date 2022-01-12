@@ -14,7 +14,12 @@ class ItemModel:
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = "SELECT * FROM items WHERE name=?"
+        query = """
+        --sql
+        SELECT * FROM items WHERE name=?
+        ;
+        """
+
         result = cursor.execute(query, (name,))
         row = result.fetchone()
         connection.close()
@@ -26,7 +31,12 @@ class ItemModel:
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = 'INSERT INTO items VALUES (?, ?)'
+        query = """
+        --sql
+        INSERT INTO items VALUES (?, ?)
+        ;
+        """
+
         cursor.execute(query, (self.name, self.price))
 
         connection.commit()
@@ -36,7 +46,11 @@ class ItemModel:
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = 'UPDATE items SET price=? WHERE name=?'
+        query = """
+        --sql
+        UPDATE items SET price=? WHERE name=?
+        ;
+        """
         cursor.execute(query, (
             self.name,
             self.price,

@@ -39,7 +39,11 @@ class Item(Resource):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = 'DELETE FROM items WHERE name=?'
+        query = """
+        --sql
+        DELETE FROM items WHERE name=?
+        ;
+        """
         cursor.execute(query, (name,))
 
         connection.commit()
@@ -69,7 +73,11 @@ class ItemList(Resource):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = 'SELECT * FROM items'
+        query = """
+        --sql
+        SELECT * FROM items
+        ;
+        """
         result = cursor.execute(query)
         items = []
         for row in result:
