@@ -54,7 +54,6 @@ class Item(Resource):
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
         updated_item = ItemModel(name, data['price'])
-        print(updated_item)
 
         if item is None:
             try:
