@@ -52,8 +52,8 @@ class ItemModel:
         ;
         """
         cursor.execute(query, (
-            self.name,
             self.price,
+            self.name,
             ))
 
         connection.commit()
