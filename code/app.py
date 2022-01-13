@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from db import db
+
 from flask import Flask
 
 from flask_jwt import JWT
@@ -13,6 +15,7 @@ from security import authenticate, identity
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.debug = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
