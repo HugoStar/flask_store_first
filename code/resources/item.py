@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask_jwt import jwt_required
 
 from flask_restful import Resource, reqparse
@@ -32,7 +30,7 @@ class Item(Resource):
         item = ItemModel(name, data['price'])
 
         try:
-            item.insert()
+            item.save_to_db()
         except Exception:
             return {'message': 'An error occurred inserting the item'}, 500
 
@@ -40,54 +38,27 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, name):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+        item = ItemModel.find_by_name(name)
+        if item:
+            item.delete_from_db()
 
-        query = """
-        --sql
-        DELETE FROM items WHERE name=?
-        ;
-        """
-        cursor.execute(query, (name,))
-
-        connection.commit()
-        connection.close()
-        return {'message': 'Item deleted'}, 201
+        return {'message': 'Item is deleted'}
 
     @jwt_required()
     def put(self, name):
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
-        updated_item = ItemModel(name, data['price'])
 
         if item is None:
-            try:
-                updated_item.insert()
-            except Exception:
-                return {'message': 'An error occurred inserting the item'}, 500
+            item = ItemModel(name, data['price'])
         else:
-            try:
-                updated_item.update()
-            except Exception:
-                return {'message': 'An error occurred updating the item'}, 500
-        return updated_item.json()
+            item.price = data['price']
+        item.save_to_db()
+
+        return item.json()
 
 
 class ItemList(Resource):
     @jwt_required()
     def get(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = """
-        --sql
-        SELECT * FROM items
-        ;
-        """
-        result = cursor.execute(query)
-        items = []
-        for row in result:
-            items.append({'name': row[0], 'price': row[1]})
-        connection.close()
-
-        return {'items': items}
+        return {'items': [elem.json() for elem in ItemModel.query.all()]}
