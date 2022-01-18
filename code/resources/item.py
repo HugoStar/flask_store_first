@@ -15,14 +15,12 @@ class Item(Resource):
         required=True,
         help='This field connot be left blank!')
 
-    @jwt_required()
     def get(self, name):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
         return {'message': 'Item not found'}, 404
 
-    @jwt_required()
     def post(self, name):
         data = Item.parser.parse_args()
 
@@ -30,47 +28,33 @@ class Item(Resource):
             return {'message': f'An item wit name {name} already exists'}, 400
 
         item = ItemModel(name, data['price'])
+        print(item)
 
         try:
-            item.insert()
+            item.save_to_db()
         except Exception:
             return {'message': 'An error occurred inserting the item'}, 500
 
         return item.json(), 201
 
-    @jwt_required()
     def delete(self, name):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+        item = ItemModel.find_by_name(name)
+        if item:
+            item.delete_to_db()
 
-        query = """
-        --sql
-        DELETE FROM items WHERE name=?
-        ;
-        """
-        cursor.execute(query, (name,))
+        return {'message': 'item delete'}
 
-        connection.commit()
-        connection.close()
-        return {'message': 'Item deleted'}, 201
-
-    @jwt_required()
     def put(self, name):
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
-        updated_item = ItemModel(name, data['price'])
 
         if item is None:
-            try:
-                updated_item.insert()
-            except Exception:
-                return {'message': 'An error occurred inserting the item'}, 500
+            item = ItemModel(name, data['price'])
         else:
-            try:
-                updated_item.update()
-            except Exception:
-                return {'message': 'An error occurred updating the item'}, 500
-        return updated_item.json()
+            item.price = data['price']
+        item.save_to_db()
+
+        return item.json()
 
 
 class ItemList(Resource):
