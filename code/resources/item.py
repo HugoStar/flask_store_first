@@ -1,4 +1,4 @@
-from flask_jwt import jwt_required
+# from flask_jwt import jwt_required
 
 from flask_restful import Resource, reqparse
 
@@ -20,14 +20,12 @@ class Item(Resource):
         required=True,
         help='This field connot be left blank!')
 
-    @jwt_required()
     def get(self, name):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
         return {'message': 'Item not found'}, 404
 
-    @jwt_required()
     def post(self, name):
         data = Item.parser.parse_args()
 
@@ -38,13 +36,13 @@ class Item(Resource):
 
         try:
             item.save_to_db()
+
         except Exception as e:
             print(e)
             return {'message': 'An error occurred inserting the item'}, 500
 
         return item.json(), 201
 
-    @jwt_required()
     def delete(self, name):
         item = ItemModel.find_by_name(name)
         if item:
@@ -52,7 +50,6 @@ class Item(Resource):
 
         return {'message': 'item delete'}
 
-    @jwt_required()
     def put(self, name):
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
@@ -67,6 +64,5 @@ class Item(Resource):
 
 
 class ItemList(Resource):
-    @jwt_required()
     def get(self):
         return {'items': [item.json() for item in ItemModel.query.all()]}

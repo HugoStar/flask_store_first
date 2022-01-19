@@ -26,7 +26,7 @@ class Store(Resource):
         except Exception:
             return {'message': 'An error occurred inserting the item'}, 500
 
-        return store.json, 201
+        return store.json(), 201
 
     @jwt_required()
     def delete(self, name):
@@ -41,4 +41,4 @@ class StoreList(Resource):
 
     @jwt_required()
     def get(self):
-        return {'stores': [store.json for store in StoreModel.query.all()]}
+        return {'stores': [store.json() for store in StoreModel.query.all()]}
