@@ -1,4 +1,5 @@
 from datetime import timedelta
+import os
 
 from db import db
 
@@ -16,7 +17,7 @@ from security import authenticate, identity
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('MY_DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.debug = True
 app.config['SECRET_KEY'] = 'super-secret'
